@@ -76,6 +76,20 @@ function formatMonthsDisplayFromArray(months){
 const $ = (sel) => document.querySelector(sel);
 const STORAGE_KEY = "acnh_checklist_v4.1";
 
+// ★ 魚影サイズ（No -> 影）
+const FISH_SHADOW_BY_NO = {
+  1:"極小",  2:"極小",  3:"小",    4:"中",    5:"大",    6:"大",    7:"極小",  8:"極小",
+  9:"小",    10:"極小", 11:"小",   12:"中",   13:"中",   14:"極小", 15:"小",   16:"小",
+  17:"小",   18:"大",   19:"特大", 20:"小",   21:"中",   22:"大",   23:"大",   24:"特大",
+  25:"小",   26:"中",   27:"中",   28:"大",   29:"中",   30:"超特大",31:"大",  32:"超特大",
+  33:"小",   34:"極小", 35:"小",   36:"小",   37:"小",   38:"極小", 39:"極小", 40:"小",
+  41:"大",   42:"特大", 43:"超特大",44:"超特大",45:"大", 46:"超特大",47:"極小",48:"極小",
+  49:"極小", 50:"小",   51:"小",   52:"超特大",53:"中", 54:"中",   55:"中",   56:"極小",
+  57:"小",   58:"中",   59:"特大", 60:"中",   61:"中",  62:"大",   63:"中",   64:"特大",
+  65:"細長", 66:"超特大",67:"超特大",68:"特大",69:"超特大",70:"背びれ",71:"特大",72:"背びれ",
+  73:"背びれ",74:"背びれ",75:"背びれ",76:"大",77:"大",78:"超特大",79:"小",80:"超特大"
+};
+
 const defaultState = {
   meta: { version: "4.1.21" },
   settings: {
@@ -443,6 +457,7 @@ function renderList(kind, items){
               <th>名前</th>
               <th style="width:86px;">売値</th>
               <th style="width:160px;">場所</th>
+              ${kind==="fish" ? `<th style="width:90px;">魚影</th>` : ``}
               <th style="width:160px;">出現月</th>
               <th style="width:200px;">出現時間</th>
             </tr>
@@ -464,6 +479,11 @@ function renderList(kind, items){
     const priceText = (it.price ?? "") !== "" ? `${it.price}ベル` : "";
     const placeText = rememberedLocLabel(it.place || "");
 
+    // ★魚影（魚のみ）
+    const shadowText = (kind==="fish")
+      ? (FISH_SHADOW_BY_NO[Number(it.no)] || "")
+      : "";
+
     html += `
       <tr class="">
         <td data-label="済"><input type="checkbox" data-act="caught" data-id="${it.id}" ${mk.caught?"checked":""}></td>
@@ -476,6 +496,7 @@ function renderList(kind, items){
         </td>
         <td data-label="売値">${escapeHtml(priceText)}</td>
         <td data-label="場所">${escapeHtml(placeText)}</td>
+        ${kind==="fish" ? `<td data-label="魚影">${shadowText ? `<span class="badge">${escapeHtml(shadowText)}</span>` : ""}</td>` : ``}
         <td data-label="出現月">${monthsStr ? `<span class="badge">${escapeHtml(monthsStr)}</span>` : ""}</td>
         <td data-label="出現時間">${timeLabel ? `<span class="badge">${escapeHtml(timeLabel)}</span>` : ""}</td>
       </tr>
